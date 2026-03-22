@@ -1,1 +1,495 @@
 
+
+
+
+  
+  
+  XAUUSD Position Size Calculator | Gold Risk &amp; Lot Sizer
+  
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #10161e 0%, #0a0f15 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    /* main card */
+    .calculator-card {
+      max-width: 620px;
+      width: 100%;
+      background: rgba(18, 25, 35, 0.85);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 215, 120, 0.12);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    /* header with gold accent */
+    .card-header {
+      background: #1e2a36;
+      padding: 1.5rem 1.8rem;
+      border-bottom: 1px solid rgba(255, 200, 80, 0.3);
+    }
+
+    .card-header h1 {
+      font-size: 1.65rem;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      background: linear-gradient(135deg, #F5E7C8 0%, #E4C580 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+
+    .badge {
+      background: #2c3e2f;
+      color: #d4c47c;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      border-radius: 40px;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+      border: 0.5px solid rgba(212, 196, 124, 0.5);
+    }
+
+    .sub {
+      color: #9aaebf;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sub span {
+      background: #0f171f;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-family: monospace;
+      font-size: 0.7rem;
+    }
+
+    /* form area */
+    .form-container {
+      padding: 1.8rem 1.8rem 1.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.4rem;
+    }
+
+    .input-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+      color: #cfdfed;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.2px;
+    }
+
+    .input-label .hint {
+      font-size: 0.7rem;
+      color: #8aa0b0;
+    }
+
+    .input-field {
+      width: 100%;
+      background: #0f171f;
+      border: 1px solid #2c3e44;
+      border-radius: 1rem;
+      padding: 0.85rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #f0f3f8;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: #e4b85c;
+      box-shadow: 0 0 0 2px rgba(228, 184, 92, 0.2);
+      background: #0c131c;
+    }
+
+    .input-field::placeholder {
+      color: #3a4b57;
+      font-weight: 400;
+    }
+
+    .row-hint {
+      font-size: 0.7rem;
+      margin-top: 0.35rem;
+      color: #6e8daa;
+      padding-left: 0.5rem;
+    }
+
+    /* button */
+    .calc-btn {
+      background: linear-gradient(95deg, #dbba6c 0%, #c9a545 100%);
+      border: none;
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 1.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #11161c;
+      margin-top: 0.6rem;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .calc-btn:hover {
+      background: linear-gradient(95deg, #e4c27a 0%, #d8b353 100%);
+      transform: scale(0.98);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    /* result section */
+    .result-card {
+      background: #0b1117;
+      margin: 0 1.5rem 1.8rem 1.5rem;
+      border-radius: 1.5rem;
+      padding: 1.2rem 1.4rem;
+      border-left: 4px solid #e4b85c;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .result-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #b9c8dd;
+      margin-bottom: 0.8rem;
+    }
+
+    .main-lot {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed #2a3a44;
+      padding-bottom: 0.8rem;
+    }
+
+    .lot-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #F9E6B3, #e9bc5a);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .lot-unit {
+      font-size: 0.85rem;
+      color: #9bb5cc;
+    }
+
+    .lot-breakdown {
+      background: #071019;
+      border-radius: 1rem;
+      padding: 0.7rem 1rem;
+      margin: 0.9rem 0;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .break-item {
+      flex: 1;
+      text-align: center;
+    }
+
+    .break-label {
+      font-size: 0.65rem;
+      color: #8fa2b9;
+    }
+
+    .break-value {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #ecd690;
+    }
+
+    .info-grid {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 0.8rem;
+      padding-top: 0.5rem;
+    }
+
+    .info-cell {
+      background: #0c141f;
+      border-radius: 1rem;
+      padding: 0.6rem 0.9rem;
+      flex: 1;
+      min-width: 110px;
+    }
+
+    .info-label {
+      font-size: 0.65rem;
+      color: #88a0b8;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e9dbbd;
+    }
+
+    .warning-note {
+      font-size: 0.7rem;
+      color: #bc9a5c;
+      margin-top: 1rem;
+      text-align: center;
+      border-top: 1px solid #212e38;
+      padding-top: 0.8rem;
+    }
+
+    hr {
+      border-color: #212e38;
+      margin: 0.5rem 0;
+    }
+
+    footer {
+      font-size: 0.65rem;
+      text-align: center;
+      padding: 0.8rem 1rem 1.2rem;
+      color: #5f748b;
+    }
+  
+
+
+
+<div class="calculator-card">
+  <div class="card-header">
+    <h1>⚡ XAUUSD Position Sizer <span class="badge">Gold | 100 oz / lot</span></h1>
+    <div class="sub">
+      <span>📐 1 standard lot = 100 Troy oz</span>
+      <span>💵 Risk per $1 move = $100 per lot</span>
+    </div>
+  </div>
+
+  <div class="form-container">
+    <div class="input-group">
+      <div class="input-label">
+        <span>📈 Entry Price (USD)</span>
+        <span class="hint">e.g., 1950.25</span>
+      </div>
+      
+      <div class="row-hint">XAUUSD bid/ask reference</div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-label">
+        <span>🛑 Stop Loss Price (USD)</span>
+        <span class="hint">absolute level</span>
+      </div>
+      
+      <div class="row-hint">For LONG: SL below entry | For SHORT: SL above entry (distance absolute)</div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-label">
+        <span>💰 Risk Amount (USD)</span>
+        <span class="hint">max loss you accept</span>
+      </div>
+      
+      <div class="row-hint">Total monetary risk on this trade</div>
+    </div>
+
+    <button class="calc-btn" id="calcButton">⟳ CALCULATE LOT SIZE</button>
+  </div>
+
+  <div class="result-card" id="resultPanel">
+    <div class="result-title">📊 POSITION SIZE (STANDARD LOTS)</div>
+    <div class="main-lot">
+      <span class="lot-number" id="lotValue">0.00</span>
+      <span class="lot-unit">standard lots (100 oz each)</span>
+    </div>
+
+    <div class="lot-breakdown">
+      <div class="break-item">
+        <div class="break-label">MINI LOTS (0.1)</div>
+        <div class="break-value" id="miniLots">0.0</div>
+      </div>
+      <div class="break-item">
+        <div class="break-label">MICRO LOTS (0.01)</div>
+        <div class="break-value" id="microLots">0.0</div>
+      </div>
+      <div class="break-item">
+        <div class="break-label">OUNCES (oz)</div>
+        <div class="break-value" id="ounces">0</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-cell">
+        <div class="info-label">📏 STOP DISTANCE</div>
+        <div class="info-value" id="stopDistance">0.00 $</div>
+        <div class="info-label" style="font-size:0.6rem">(price difference)</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">🎯 DISTANCE IN PIPS*</div>
+        <div class="info-value" id="pipsDistance">0</div>
+        <div class="info-label" style="font-size:0.6rem">1 pip = 0.01 USD</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">⚡ RISK PER PIP (0.01)</div>
+        <div class="info-value" id="riskPerPip">0.00 $</div>
+      </div>
+    </div>
+
+    <div class="warning-note" id="warningMsg">
+      ✅ Accurate position sizing | Risk amount = Lot × StopDistance × 100
+    </div>
+  </div>
+  <footer>
+    ⚡ Formula: Lot = RiskAmount / ( |Entry - StopLoss| × 100 )<br>
+    * 1 pip = 0.01 price movement (standard gold quoting). Risk per pip = Lot × 1 USD.
+  </footer>
+</div>
+
+
+  (function() {
+    // DOM elements
+    const entryInput = document.getElementById('entryPrice');
+    const stopInput = document.getElementById('stopLoss');
+    const riskInput = document.getElementById('riskAmount');
+    const calcBtn = document.getElementById('calcButton');
+    
+    // result fields
+    const lotSpan = document.getElementById('lotValue');
+    const miniSpan = document.getElementById('miniLots');
+    const microSpan = document.getElementById('microLots');
+    const ouncesSpan = document.getElementById('ounces');
+    const stopDistanceSpan = document.getElementById('stopDistance');
+    const pipsDistanceSpan = document.getElementById('pipsDistance');
+    const riskPerPipSpan = document.getElementById('riskPerPip');
+    const warningMsgDiv = document.getElementById('warningMsg');
+    
+    // contract config: 1 standard lot = 100 troy ounces
+    const OZ_PER_STD_LOT = 100;
+    
+    // Helper: absolute difference &amp; validation
+    function computePosition() {
+      // get raw values
+      let entry = parseFloat(entryInput.value);
+      let stop = parseFloat(stopInput.value);
+      let riskUsd = parseFloat(riskInput.value);
+      
+      // Reset warning style to normal
+      warningMsgDiv.style.color = "#bc9a5c";
+      warningMsgDiv.style.fontWeight = "normal";
+      
+      // validation: not a number
+      if (isNaN(entry) || isNaN(stop) || isNaN(riskUsd)) {
+        setEmptyResults();
+        warningMsgDiv.innerHTML = "⚠️ Please enter valid numeric values for entry, stop loss and risk amount.";
+        warningMsgDiv.style.color = "#e08e6b";
+        return;
+      }
+      
+      // price difference must be &gt; 0
+      const priceDiff = Math.abs(entry - stop);
+      if (priceDiff  0).";
+        warningMsgDiv.style.color = "#e08e6b";
+        return;
+      }
+      
+      if (riskUsd  $1000 risk per lot
+      // lot size (standard lots)
+      let rawLots = riskUsd / riskPerStandardLot;
+      
+      // round to 3 decimal places for practical trading (most brokers allow 0.001 lot precision)
+      let roundedLots = Math.round(rawLots * 1000) / 1000;
+      // if extremely small but positive, show value
+      if (roundedLots  0 &amp;&amp; priceDiff &gt; 0) {
+        roundedLots = 0.001;
+      }
+      
+      // Cap display at realistic max? Not capping, but show warning if too large
+      let warningExtra = "";
+      if (roundedLots &gt; 50) {
+        warningExtra = " ⚠️ Very large lot size! Most brokers limit 10-50 lots.";
+      } else if (roundedLots  0) {
+        warningExtra = " ℹ️ Lot size below 0.01 (micro). Some brokers require min 0.01.";
+      } else if (roundedLots  0 &amp;&amp; exactRisk  riskUsd * 1.01) {
+        // small rounding note
+        warningMsgDiv.innerHTML += ` • slight rounding effect, actual risk ≈ $${exactRisk}`;
+      }
+      if (warningExtra) warningMsgDiv.style.color = "#e6c27a";
+      else warningMsgDiv.style.color = "#bcd0aa";
+    }
+    
+    function setEmptyResults() {
+      lotSpan.innerText = "—";
+      miniSpan.innerText = "—";
+      microSpan.innerText = "—";
+      ouncesSpan.innerText = "—";
+      stopDistanceSpan.innerText = "—";
+      pipsDistanceSpan.innerText = "—";
+      riskPerPipSpan.innerText = "—";
+    }
+    
+    // also a function to set default demo calculation on page load
+    function initDefaultCalculation() {
+      computePosition();
+    }
+    
+    // add event listeners: button + also realtime on input (optional but user friendly)
+    calcBtn.addEventListener('click', (e) =&gt; {
+      e.preventDefault();
+      computePosition();
+    });
+    
+    // attach input events for automatic update (makes it dynamic)
+    const inputs = [entryInput, stopInput, riskInput];
+    inputs.forEach(inp =&gt; {
+      inp.addEventListener('input', () =&gt; {
+        computePosition();
+      });
+      inp.addEventListener('change', () =&gt; {
+        computePosition();
+      });
+    });
+    
+    // initial calculation
+    initDefaultCalculation();
+    
+    // additional manual adjustment: if any field becomes empty, fallback
+    function sanitizeFields() {
+      if (entryInput.value === "") entryInput.value = "1950.00";
+      if (stopInput.value === "") stopInput.value = "1940.00";
+      if (riskInput.value === "") riskInput.value = "500";
+      computePosition();
+    }
+    
+    window.addEventListener('load', () =&gt; {
+      sanitizeFields();
+    });
+  })();
+
+
